@@ -1,2 +1,1 @@
-/* /////////////////// Headers inclusion ///////////////////*/
 #include "UserForm.h"
