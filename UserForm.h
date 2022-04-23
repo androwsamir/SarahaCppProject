@@ -28,6 +28,8 @@ namespace BlueSara7a {
 		int i = 1;
 		int x = 60;
 		String^ name;
+		bool this_contact = 0;
+		String^ prev_name = "";
 		Form^ mainform;
 		long long ID = 0;
 		map<String^, long long>Contacts;
@@ -346,7 +348,9 @@ namespace BlueSara7a {
 				   while ((str = din->ReadLine()) != nullptr)
 				   {
 					   last_message = "";
-					   last_message = str;
+					   for (int i = 1; i < str->Length; i++) {
+						   last_message += str[i];
+					   }
 				   }
 				   din->Close();
 			   }
@@ -370,8 +374,8 @@ namespace BlueSara7a {
 		}
 		void Send_Message(String^ message, long long id) {
 			   String^ user = get_username(id);
-			   String^ filename = "Data/" + user + '_' + System::Convert::ToString(id) + '/' + System::Convert::ToString(ID) + ".txt";
-			   String^ filename1 = "Data/" + username + '_' + System::Convert::ToString(ID) + '/' + System::Convert::ToString(id) + ".txt";
+			   String^ filename = "Data/" + user + "_" + System::Convert::ToString(id) + "/" + System::Convert::ToString(ID) + ".txt";
+			   String^ filename1 = "Data/" + username + "_" + System::Convert::ToString(ID) + "/" + System::Convert::ToString(id) + ".txt";
 			   StreamWriter^ sw = gcnew StreamWriter(filename, true);
 			   sw->WriteLine("2" + message);
 			   sw->Close();
@@ -480,6 +484,7 @@ namespace BlueSara7a {
 			load_favorite();
 			load_contacts();
 			InitializeComponent();
+			Chat_Name->Text = username;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -698,8 +703,6 @@ namespace BlueSara7a {
 			this->button2->TabIndex = 1;
 			this->button2->UseVisualStyleBackColor = false;
 			this->button2->Click += gcnew System::EventHandler(this, &UserForm::button2_Click);
-			this->button2->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &UserForm::button2_KeyDown);
-			//this->button2->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &UserForm::button2_KeyPress);
 			// 
 			// Message
 			// 
@@ -710,6 +713,8 @@ namespace BlueSara7a {
 			this->Message->Size = System::Drawing::Size(700, 41);
 			this->Message->TabIndex = 0;
 			this->Message->Text = L"Type text";
+			this->Message->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &UserForm::Message_KeyDown);
+			//this->Message->TextChanged += gcnew System::EventHandler(this, &UserForm::Message_TextChanged);
 			// 
 			// panel2
 			// 
@@ -978,9 +983,19 @@ namespace BlueSara7a {
 			}
 			else { break; }
 		}
-		long long id = get_id(name);
-		load_messages(id);
-		Message->Focus();
+		if (prev_name == name) {
+			//continue;
+		}
+		else {
+			prev_name = name;
+			
+			Chat1->Items->Clear();
+			Chat2->Items->Clear();
+			
+			long long id = get_id(name);
+			load_messages(id);
+			Message->Focus();
+		}
 	}
 	private: System::Void Star2_button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Star2_button->Hide();
@@ -1012,17 +1027,15 @@ namespace BlueSara7a {
 		String^ msg = Message->Text;
 		Chat2->Items->Add(msg);
 		Chat1->Items->Add("");
-		//Send_Message(msg, get_id(name));
-		//load_messages(get_id(name));
+		Send_Message(msg, get_id(name));
 		Message->Clear();
 		Message->Focus();
 	}		  
-	private: System::Void button2_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
-		if (e->KeyValue == (int)Keys::Enter)
-		{
-			button2->PerformClick();
-		}
+	private: System::Void Message_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+	   if (e->KeyCode == Keys::Enter)
+	   {
+		   button2->PerformClick();
+	   }
 	}
-
 };
 }
