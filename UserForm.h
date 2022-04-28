@@ -230,6 +230,15 @@ namespace BlueSara7a {
 				   MessageBox::Show("This contact doesn't exist");
 			   }
 		   }
+		String^ Search_About_Contact_id(long long search_id) {
+			for (pair<String^, long long>pr : Contacts) {
+				if (search_id == pr.second)
+				{
+					return pr.first;
+					break;
+				}
+			}
+		}
 		bool Check(String^ username, long long id) {
 			   String^ filename = "check.txt";
 			   bool found = 0;
@@ -337,6 +346,14 @@ namespace BlueSara7a {
 				   Create_Contact(pr.first, last_message);
 			   }
 		   }
+		void Display_Messages() {
+			while (!Messages.empty())
+			{
+				Chat1->Items->Add(Messages.top());
+				Messages.pop();
+			}
+			load_messages();
+		}
 		String^ get_last_message(String^ name, String^ id) {
 			   String^ last_message;
 			   String^ filename = "Data/";
@@ -419,6 +436,14 @@ namespace BlueSara7a {
 
 	private: System::Windows::Forms::Panel^ Add_panel;
 
+	private: System::Windows::Forms::Panel^ Menu2;
+	private: System::Windows::Forms::Button^ Favorit_Button;
+
+	private: System::Windows::Forms::Button^ button1;
+	private: System::Windows::Forms::Panel^ panel5;
+	private: System::Windows::Forms::Button^ Special_contact;
+
+	private: System::Windows::Forms::Button^ button3;
 	private: System::Windows::Forms::Label^ label3;
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TextBox^ Contact_ID;
@@ -449,7 +474,7 @@ namespace BlueSara7a {
 				static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			Contact->ForeColor = System::Drawing::Color::White;
 			int y;
-			y = 60 + x;
+			y = 160 + x;
 			x += 70;
 			Contact->Location = System::Drawing::Point(3, y);
 			Contact->Name = L"Contact" + System::Convert::ToString(i);
@@ -484,7 +509,16 @@ namespace BlueSara7a {
 			load_favorite();
 			load_contacts();
 			InitializeComponent();
-			Chat_Name->Text = username;
+			this->UnSearch_button->Hide();
+			this->Add_Button->Hide();
+			this->Logout_Button->Hide();
+			this->Star_Button->Hide();
+			this->Back_Button->Hide();
+			this->Star2_button->Hide();
+			this->Add_panel->Hide();
+			this->Menu2->Hide();
+			this->button3->Hide();
+			this->Special_contact->Enabled = false;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -540,6 +574,8 @@ namespace BlueSara7a {
 		{
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(UserForm::typeid));
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
+			this->Menu2 = (gcnew System::Windows::Forms::Panel());
+			this->Favorit_Button = (gcnew System::Windows::Forms::Button());
 			this->Chat2 = (gcnew System::Windows::Forms::ListBox());
 			this->Add_panel = (gcnew System::Windows::Forms::Panel());
 			this->label3 = (gcnew System::Windows::Forms::Label());
@@ -552,6 +588,7 @@ namespace BlueSara7a {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->Message = (gcnew System::Windows::Forms::TextBox());
 			this->panel2 = (gcnew System::Windows::Forms::Panel());
+			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->Star2_button = (gcnew System::Windows::Forms::Button());
 			this->Back_Button = (gcnew System::Windows::Forms::Button());
 			this->Star_Button = (gcnew System::Windows::Forms::Button());
@@ -559,12 +596,16 @@ namespace BlueSara7a {
 			this->Add_Button = (gcnew System::Windows::Forms::Button());
 			this->Menu = (gcnew System::Windows::Forms::Button());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->Chat_Name = (gcnew System::Windows::Forms::Label());
 			this->panel4 = (gcnew System::Windows::Forms::Panel());
+			this->panel5 = (gcnew System::Windows::Forms::Panel());
+			this->Special_contact = (gcnew System::Windows::Forms::Button());
 			this->UnSearch_button = (gcnew System::Windows::Forms::Button());
 			this->Search_button = (gcnew System::Windows::Forms::Button());
 			this->Search = (gcnew System::Windows::Forms::TextBox());
 			this->panel1->SuspendLayout();
+			this->Menu2->SuspendLayout();
 			this->Add_panel->SuspendLayout();
 			this->panel2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -574,6 +615,7 @@ namespace BlueSara7a {
 			// panel1
 			// 
 			this->panel1->BackColor = System::Drawing::Color::Gray;
+			this->panel1->Controls->Add(this->Menu2);
 			this->panel1->Controls->Add(this->Chat2);
 			this->panel1->Controls->Add(this->Add_panel);
 			this->panel1->Controls->Add(this->Chat1);
@@ -583,6 +625,25 @@ namespace BlueSara7a {
 			this->panel1->Name = L"panel1";
 			this->panel1->Size = System::Drawing::Size(795, 602);
 			this->panel1->TabIndex = 1;
+			// 
+			// Menu2
+			// 
+			this->Menu2->Controls->Add(this->Favorit_Button);
+			this->Menu2->Location = System::Drawing::Point(616, 6);
+			this->Menu2->Name = L"Menu2";
+			this->Menu2->Size = System::Drawing::Size(128, 138);
+			this->Menu2->TabIndex = 7;
+			// 
+			// Favorit_Button
+			// 
+			this->Favorit_Button->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+			this->Favorit_Button->Location = System::Drawing::Point(4, 6);
+			this->Favorit_Button->Name = L"Favorit_Button";
+			this->Favorit_Button->Size = System::Drawing::Size(121, 42);
+			this->Favorit_Button->TabIndex = 0;
+			this->Favorit_Button->Text = L"Add To favorit";
+			this->Favorit_Button->UseVisualStyleBackColor = true;
+			this->Favorit_Button->Click += gcnew System::EventHandler(this, &UserForm::Favorit_Button_Click);
 			// 
 			// Chat2
 			// 
@@ -609,7 +670,6 @@ namespace BlueSara7a {
 			this->Add_panel->Name = L"Add_panel";
 			this->Add_panel->Size = System::Drawing::Size(311, 194);
 			this->Add_panel->TabIndex = 9;
-			this->Add_panel->Hide();
 			// 
 			// label3
 			// 
@@ -714,11 +774,11 @@ namespace BlueSara7a {
 			this->Message->TabIndex = 0;
 			this->Message->Text = L"Type text";
 			this->Message->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &UserForm::Message_KeyDown);
-			//this->Message->TextChanged += gcnew System::EventHandler(this, &UserForm::Message_TextChanged);
 			// 
 			// panel2
 			// 
 			this->panel2->BackColor = System::Drawing::Color::MidnightBlue;
+			this->panel2->Controls->Add(this->button3);
 			this->panel2->Controls->Add(this->Star2_button);
 			this->panel2->Controls->Add(this->Back_Button);
 			this->panel2->Controls->Add(this->Star_Button);
@@ -729,6 +789,24 @@ namespace BlueSara7a {
 			this->panel2->Name = L"panel2";
 			this->panel2->Size = System::Drawing::Size(397, 79);
 			this->panel2->TabIndex = 2;
+			// 
+			// button3
+			// 
+			this->button3->BackColor = System::Drawing::Color::Transparent;
+			this->button3->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button3.BackgroundImage")));
+			this->button3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->button3->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->button3->FlatAppearance->BorderSize = 0;
+			this->button3->FlatAppearance->MouseDownBackColor = System::Drawing::Color::MidnightBlue;
+			this->button3->FlatAppearance->MouseOverBackColor = System::Drawing::Color::MidnightBlue;
+			this->button3->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button3->ForeColor = System::Drawing::Color::Transparent;
+			this->button3->Location = System::Drawing::Point(304, 17);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(45, 51);
+			this->button3->TabIndex = 6;
+			this->button3->UseVisualStyleBackColor = false;
+			this->button3->Click += gcnew System::EventHandler(this, &UserForm::button3_Click);
 			// 
 			// Star2_button
 			// 
@@ -746,7 +824,6 @@ namespace BlueSara7a {
 			this->Star2_button->TabIndex = 5;
 			this->Star2_button->UseVisualStyleBackColor = false;
 			this->Star2_button->Click += gcnew System::EventHandler(this, &UserForm::Star2_button_Click);
-			this->Star2_button->Hide();
 			// 
 			// Back_Button
 			// 
@@ -764,7 +841,6 @@ namespace BlueSara7a {
 			this->Back_Button->TabIndex = 4;
 			this->Back_Button->UseVisualStyleBackColor = false;
 			this->Back_Button->Click += gcnew System::EventHandler(this, &UserForm::Back_Button_Click);
-			this->Back_Button->Hide();
 			// 
 			// Star_Button
 			// 
@@ -782,7 +858,6 @@ namespace BlueSara7a {
 			this->Star_Button->TabIndex = 3;
 			this->Star_Button->UseVisualStyleBackColor = false;
 			this->Star_Button->Click += gcnew System::EventHandler(this, &UserForm::Star_Button_Click);
-			this->Star_Button->Hide();
 			// 
 			// Logout_Button
 			// 
@@ -800,7 +875,6 @@ namespace BlueSara7a {
 			this->Logout_Button->TabIndex = 2;
 			this->Logout_Button->UseVisualStyleBackColor = false;
 			this->Logout_Button->Click += gcnew System::EventHandler(this, &UserForm::Logout_Button_Click);
-			this->Logout_Button->Hide();
 			// 
 			// Add_Button
 			// 
@@ -813,13 +887,12 @@ namespace BlueSara7a {
 			this->Add_Button->FlatAppearance->MouseOverBackColor = System::Drawing::Color::MidnightBlue;
 			this->Add_Button->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->Add_Button->ForeColor = System::Drawing::Color::Transparent;
-			this->Add_Button->Location = System::Drawing::Point(243, 12);
+			this->Add_Button->Location = System::Drawing::Point(232, 13);
 			this->Add_Button->Name = L"Add_Button";
 			this->Add_Button->Size = System::Drawing::Size(45, 51);
 			this->Add_Button->TabIndex = 1;
 			this->Add_Button->UseVisualStyleBackColor = false;
 			this->Add_Button->Click += gcnew System::EventHandler(this, &UserForm::Add_Button_Click);
-			this->Add_Button->Hide();
 			// 
 			// Menu
 			// 
@@ -841,11 +914,29 @@ namespace BlueSara7a {
 			// panel3
 			// 
 			this->panel3->BackColor = System::Drawing::Color::MidnightBlue;
+			this->panel3->Controls->Add(this->button1);
 			this->panel3->Controls->Add(this->Chat_Name);
 			this->panel3->Location = System::Drawing::Point(396, -2);
 			this->panel3->Name = L"panel3";
 			this->panel3->Size = System::Drawing::Size(795, 79);
 			this->panel3->TabIndex = 3;
+			// 
+			// button1
+			// 
+			this->button1->BackColor = System::Drawing::Color::Transparent;
+			this->button1->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.BackgroundImage")));
+			this->button1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->button1->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->button1->FlatAppearance->BorderSize = 0;
+			this->button1->FlatAppearance->MouseDownBackColor = System::Drawing::Color::MidnightBlue;
+			this->button1->FlatAppearance->MouseOverBackColor = System::Drawing::Color::MidnightBlue;
+			this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button1->Location = System::Drawing::Point(734, 21);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(44, 43);
+			this->button1->TabIndex = 6;
+			this->button1->UseVisualStyleBackColor = false;
+			this->button1->Click += gcnew System::EventHandler(this, &UserForm::button1_Click);
 			// 
 			// Chat_Name
 			// 
@@ -865,6 +956,8 @@ namespace BlueSara7a {
 			this->panel4->AutoScroll = true;
 			this->panel4->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)),
 				static_cast<System::Int32>(static_cast<System::Byte>(64)));
+			this->panel4->Controls->Add(this->panel5);
+			this->panel4->Controls->Add(this->Special_contact);
 			this->panel4->Controls->Add(this->UnSearch_button);
 			this->panel4->Controls->Add(this->Search_button);
 			this->panel4->Controls->Add(this->Search);
@@ -872,6 +965,31 @@ namespace BlueSara7a {
 			this->panel4->Name = L"panel4";
 			this->panel4->Size = System::Drawing::Size(397, 599);
 			this->panel4->TabIndex = 4;
+			// 
+			// panel5
+			// 
+			this->panel5->BackColor = System::Drawing::Color::Silver;
+			this->panel5->Location = System::Drawing::Point(3, 121);
+			this->panel5->Name = L"panel5";
+			this->panel5->Size = System::Drawing::Size(394, 6);
+			this->panel5->TabIndex = 8;
+			// 
+			// Special_contact
+			// 
+			this->Special_contact->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(80)), static_cast<System::Int32>(static_cast<System::Byte>(80)),
+				static_cast<System::Int32>(static_cast<System::Byte>(80)));
+			this->Special_contact->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+			this->Special_contact->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->Special_contact->ForeColor = System::Drawing::Color::White;
+			this->Special_contact->Location = System::Drawing::Point(3, 50);
+			this->Special_contact->Name = L"Special_contact";
+			this->Special_contact->Size = System::Drawing::Size(391, 57);
+			this->Special_contact->TabIndex = 1;
+			this->Special_contact->Text = L"Search contact";
+			this->Special_contact->UseVisualStyleBackColor = false;
+			this->Special_contact->Click += gcnew System::EventHandler(this, &UserForm::Special_contact_Click);
+			
 			// 
 			// UnSearch_button
 			// 
@@ -891,7 +1009,6 @@ namespace BlueSara7a {
 			this->UnSearch_button->TabIndex = 7;
 			this->UnSearch_button->UseVisualStyleBackColor = false;
 			this->UnSearch_button->Click += gcnew System::EventHandler(this, &UserForm::UnSearch_button_Click);
-			this->UnSearch_button->Hide();
 			// 
 			// Search_button
 			// 
@@ -922,6 +1039,7 @@ namespace BlueSara7a {
 			this->Search->TabIndex = 0;
 			this->Search->Text = L"Search for a contact";
 			this->Search->TextChanged += gcnew System::EventHandler(this, &UserForm::Search_TextChanged);
+			this->Search->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &UserForm::Search_KeyDown);
 			// 
 			// UserForm
 			// 
@@ -940,6 +1058,7 @@ namespace BlueSara7a {
 			this->Text = L"UserForm";
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
+			this->Menu2->ResumeLayout(false);
 			this->Add_panel->ResumeLayout(false);
 			this->Add_panel->PerformLayout();
 			this->panel2->ResumeLayout(false);
@@ -960,6 +1079,15 @@ namespace BlueSara7a {
 	private: System::Void Star_Button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Star_Button->Hide();
 		Star2_button->Show();
+		Chat1->Items->Clear();
+		Chat2->Items->Clear();
+		while (!favoritemessage.empty())
+		{
+			Chat1->Items->Add(favoritemessage.front());
+			favoritemessage.pop();
+		}
+		load_favorite();
+		name = "";
 	}
 	private: System::Void Back_Button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Logout_Button->Hide();
@@ -967,12 +1095,14 @@ namespace BlueSara7a {
 		Add_Button->Hide();
 		Star_Button->Hide();
 		Star2_button->Hide();
+		button3->Hide();
 	}
 	private: System::Void Menu_Click(System::Object^ sender, System::EventArgs^ e) {
 		Back_Button->Show();
 		Logout_Button->Show();
 		Add_Button->Show();
 		Star_Button->Show();
+		button3->Show();
 	}
 	private: System::Void Contact_Click(System::Object^ sender, System::EventArgs^ e) {
 		Button^ this_Button = (Button^)sender;
@@ -983,15 +1113,14 @@ namespace BlueSara7a {
 			}
 			else { break; }
 		}
+		Chat_Name->Text = name;
 		if (prev_name == name) {
 			//continue;
 		}
 		else {
 			prev_name = name;
-			
 			Chat1->Items->Clear();
 			Chat2->Items->Clear();
-			
 			long long id = get_id(name);
 			load_messages(id);
 			Message->Focus();
@@ -1000,14 +1129,22 @@ namespace BlueSara7a {
 	private: System::Void Star2_button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Star2_button->Hide();
 		Star_Button->Show();
+		Chat1->Items->Clear();
+		Chat2->Items->Clear();
 	}
 	private: System::Void Search_button_Click(System::Object^ sender, System::EventArgs^ e) {
-		Search_button->Hide();
-		UnSearch_button->Show();
+		//Search_button->Hide();
+		//UnSearch_button->Show();
+		long long search_id = System::Convert::ToInt32(Search->Text);
+		Search->Text = "";
+		
+		Special_contact->Text = Search_About_Contact_id(search_id);
+
 	}
 	private: System::Void Search_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-		Search_button->Hide();
-		UnSearch_button->Show();
+		//Search_button->Hide();
+		UnSearch_button->Hide();
+
 	}
 	private: System::Void UnSearch_button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Search_button->Show();
@@ -1036,6 +1173,51 @@ namespace BlueSara7a {
 	   {
 		   button2->PerformClick();
 	   }
+	   Special_contact->Enabled = true;
+	}
+    public: Boolean Menu2_hide = true;
+	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
+		if (Menu2_hide) {
+			Menu2->Show();
+			Menu2_hide = false;
+		}
+		else
+		{
+			Menu2->Hide();
+			Menu2_hide = true;
+
+		}
+	}
+	private: System::Void Favorit_Button_Click(System::Object^ sender, System::EventArgs^ e) {
+		//favoritemessage= Chat1->SelectedItem->ToString();
+	}
+	//String^ FavMessage="";
+	//String^ FavMessage2="";
+	//if (Chat2->SelectedItems->Count > 0) {
+	//	FavMessage2 = Chat2->SelectedItem->ToString();
+	//	Put_Message_Favorite(FavMessage2);
+	//	Console::WriteLine(FavMessage2);
+	//}
+	//if (Chat1->SelectedItems->Count > 0) {
+	//	FavMessage = Chat1->SelectedItem->ToString();
+	//	Put_Message_Favorite(FavMessage);
+	//	Console::WriteLine(FavMessage);
+	//}
+	private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
+		Chat1->Items->Clear();
+		Chat2->Items->Clear();
+		Chat_Name->Text = "Sent Messages";
+		name = "";
+		Display_Messages();
+	}
+	private: System::Void Special_contact_Click(System::Object^ sender, System::EventArgs^ e) {
+		
+	}
+	private: System::Void Search_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		if (e->KeyCode == Keys::Enter)
+		{
+			Search_button->PerformClick();
+		}
 	}
 };
 }

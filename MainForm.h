@@ -310,7 +310,7 @@ namespace BlueSara7a {
 				pass = "";
 				id = "";
 				c = 0;
-				for (int i = 0; i < str->Length; i++) {
+				for (int i = 0; i < str->Length; i++) { //andrew 
 					if (str[i] != ' ') {
 						user += str[i];
 					}
