@@ -1202,7 +1202,9 @@ namespace BlueSara7a {
 	private: System::Void Add_Button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Add_Contact^ add_contact = gcnew Add_Contact(this, username, ID);
 		add_contact->ShowDialog();
-		load_contacts();
+		this->panel4->Controls->Clear();
+		x = 10;
+		this->load_contacts();
 	}
 	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
 		String^ msg = Message->Text;
@@ -1210,6 +1212,9 @@ namespace BlueSara7a {
 		Chat1->Items->Add("");
 		Send_Message(msg, get_id(name));
 		load_messages(get_id(name));
+		this->panel4->Controls->Clear();
+		x = 10;
+		this->load_contacts();
 		Message->Clear();
 		Message->Focus();
 	}		  
