@@ -1055,6 +1055,7 @@ namespace BlueSara7a {
 		Star_Button->Hide();
 		Star2_button->Show();
 		Sent_Favorite->Show();
+		Chat_Name->Text = "Favorite Messages";
 		while (!favoritemessage.empty())
 		{
 			Sent_Favorite_Chat->Items->Add(favoritemessage.front());
@@ -1105,6 +1106,7 @@ namespace BlueSara7a {
 		Star2_button->Hide();
 		Star_Button->Show();
 		Sent_Favorite->Hide();
+		Chat_Name->Text = name;
 	}
 	private: System::Void Search_button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Search_button->Hide();
@@ -1242,6 +1244,11 @@ namespace BlueSara7a {
 	private: System::Void Undo_Last_Sent_Click(System::Object^ sender, System::EventArgs^ e) {
 		Undo_last_message();
 		Undo_last_message_from_chat();
+		if (Chat_Name->Text == "Sent Messages") {
+			Sent_Favorite_Chat->Items->Clear();
+			Sent_Favorite->Show();
+			Display_Messages();
+		}
 		Chat1->Items->Clear();
 		Chat2->Items->Clear();
 		long long id = get_id(name);
@@ -1253,6 +1260,13 @@ namespace BlueSara7a {
 	}
 	private: System::Void Remove_Oldest_Click(System::Object^ sender, System::EventArgs^ e) {
 		Remove_theOldest_Message();
+		Sent_Favorite_Chat->Items->Clear();
+		while (!favoritemessage.empty())
+		{
+			Sent_Favorite_Chat->Items->Add(favoritemessage.front());
+			favoritemessage.pop();
+		}
+		load_favorite();
 	}
 };
 }
