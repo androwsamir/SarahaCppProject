@@ -65,51 +65,10 @@ namespace BlueSara7a {
 			sw->Close();
 			load_favorite();
 		}
-		/*void set_favoritemessage_size() {
-			   queue<String^>temp;
-			   //Console::WriteLine(favoritemessage.size());
-			   while (!favoritemessage.empty()) {
-				   if (favoritemessage.front() != nullptr) {
-					   temp.push(favoritemessage.front());
-					   favoritemessage.pop();
-				   }
-			   }
-			   while (!temp.empty()) {
-				   favoritemessage.push(temp.front());
-				   temp.pop();
-			   }
-		   }*/
-		/*void set_message_size() {
-		//	   stack<String^>temp;
-		//	   //Console::WriteLine(Messages.size());
-		//	   while (!Messages.empty()) {
-		//		   if (Messages.top() != nullptr) {
-		//			   temp.push(Messages.top());
-		//			   Messages.pop();
-		//		   }
-		//	   }
-		//	   while (!temp.empty()) {
-		//		   Messages.push(temp.top());
-		//		   temp.pop();
-		//	   }
-		//   }*/
-		/*void set_message_size2() {
-		//	   queue<String^>temp;
-		//	   //Console::WriteLine(Messages.size());
-		//	   while (!LifeChat.empty()) {
-		//		   if (LifeChat.front() != nullptr) {
-		//			   temp.push(LifeChat.front());
-		//			   LifeChat.pop();
-		//		   }
-		//	   }
-		//	   while (!temp.empty()) {
-		//		   LifeChat.push(temp.front());
-		//		   temp.pop();
-		//	   }
-		//   }*/
 		void load_messages() {
 			int count = 0;
 			String^ temp = "";
+			stack<String^> tmp;
 			String^ filename = "Data/";
 			filename += username + "_" + System::Convert::ToString(ID) + "/message.txt";
 			while (!Messages.empty()) {
@@ -123,15 +82,18 @@ namespace BlueSara7a {
 				{
 					count++;
 					if (count == 2) {
-						Messages.push(temp + "\n" + str);
+						tmp.push(temp + "\n" + str);
 						count = 0;
 					}
 					else {
 						temp = str;
 					}
-					
 				}
 				din->Close();
+				while (!tmp.empty()) {
+					Messages.push(tmp.top());
+					tmp.pop();
+				}
 			}
 			catch (Exception^ e) {
 				if (dynamic_cast<FileNotFoundException^>(e))
@@ -229,17 +191,10 @@ namespace BlueSara7a {
 			   Display_Contacts();
 		   }
 		void Undo_last_message() {
-			deque<String^> tmp;
-			while (!Messages.empty()) {
-				tmp.push_back(Messages.top());
+			if (!Messages.empty()) {
 				Messages.pop();
+				set_Messages_in_file();
 			}
-			tmp.pop_back();
-			while (!tmp.empty()) {
-				Messages.push(tmp.back());
-				tmp.pop_back();
-			}
-			set_Messages_in_file();
 		}
 		void Put_Message_Favorite(String^ message) {
 			   favoritemessage.push(message);
@@ -273,16 +228,10 @@ namespace BlueSara7a {
 			   }
 		   }
 		void Display_Messages() {
-			stack<String^> temp;
 			while (!Messages.empty())
 			{
-				temp.push(Messages.top());
+				Sent_Favorite_Chat->Items->Add(Messages.top());
 				Messages.pop();
-			}
-			while (!temp.empty())
-			{
-				Sent_Favorite_Chat->Items->Add(temp.top());
-				temp.pop();
 			}
 			load_messages();
 		}
@@ -339,7 +288,6 @@ namespace BlueSara7a {
 		{
 			String^ msg = "";
 			String^ msg2 = "";
-
 			while (!LifeChat.empty())
 			{
 				msg = LifeChat.front();
@@ -387,7 +335,7 @@ namespace BlueSara7a {
 					temp += id[i];
 				}
 				id = temp;
-				Console::WriteLine(id);
+				din->Close();
 			}
 			catch (Exception^ e) {
 				if (dynamic_cast<FileNotFoundException^>(e))
@@ -435,7 +383,6 @@ namespace BlueSara7a {
 				else
 					Console::WriteLine("problem reading file '{0}'", filename);
 			}
-			//load_messages(System::Convert::ToInt32(id));
 		}
 		void load_temp() {
 			String^ id = get_id();
@@ -513,7 +460,6 @@ namespace BlueSara7a {
 
 	private:
 		void Create_Contact(String^ name, String^ last_message) {
-			String^ button_name = "Contact" + System::Convert::ToString(i);
 			Button^ Contact = gcnew Button;
 			Contact->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -1104,7 +1050,6 @@ namespace BlueSara7a {
 		this->Hide();
 		mainform->Show();
 	}
-
 	private: System::Void Star_Button_Click(System::Object^ sender, System::EventArgs^ e) {
 		Sent_Favorite_Chat->Items->Clear();
 		Star_Button->Hide();
@@ -1294,10 +1239,17 @@ namespace BlueSara7a {
 			}
 		}
 	}
-
 	private: System::Void Undo_Last_Sent_Click(System::Object^ sender, System::EventArgs^ e) {
 		Undo_last_message();
 		Undo_last_message_from_chat();
+		Chat1->Items->Clear();
+		Chat2->Items->Clear();
+		long long id = get_id(name);
+		load_messages(id);
+		Display_Chat(id);
+		this->panel4->Controls->Clear();
+		x = 10;
+		this->load_contacts();
 	}
 	private: System::Void Remove_Oldest_Click(System::Object^ sender, System::EventArgs^ e) {
 		Remove_theOldest_Message();

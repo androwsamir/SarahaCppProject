@@ -72,55 +72,55 @@ namespace BlueSara7a {
 				else
 					Console::WriteLine("problem reading file '{0}'", filename);
 			}
-			if (!found) {
-				MessageBox::Show("Check username or ID");
-			}
 			return found;
 		}
 		void Add_User(long long id) {
 			if (!Check(id)) {
-				return;
+				MessageBox::Show("Invalid ID!");
 			}
-			String^ filename = "Data/";
-			filename += this->username + "_" + System::Convert::ToString(ID) + "/contacts.txt";
-			bool found = 0;
-			try {
-				Console::WriteLine("tying to open file", filename);
-				StreamReader^ din = File::OpenText(filename);
-				String^ str;
-				String^ contactname = "";
-				while ((str = din->ReadLine()) != nullptr)
-				{
-					contactname = "";
-					for (int i = 0; i < str->Length; i++) {
-						if (str[i] != ' ') {
-							contactname += str[i];
+			else {
+				String^ filename = "Data/";
+				filename += this->username + "_" + System::Convert::ToString(ID) + "/contacts.txt";
+				bool found = 0;
+				try {
+					Console::WriteLine("tying to open file", filename);
+					StreamReader^ din = File::OpenText(filename);
+					String^ str;
+					String^ contactname = "";
+					while ((str = din->ReadLine()) != nullptr)
+					{
+						contactname = "";
+						for (int i = 0; i < str->Length; i++) {
+							if (str[i] != ' ') {
+								contactname += str[i];
+							}
+							else {
+								break;
+							}
 						}
-						else {
+						if (contactname == Contact_Name) {
+							found = 1;
 							break;
 						}
 					}
-					if (contactname == Contact_Name) {
-						found = 1;
-						break;
-					}
+					din->Close();
 				}
-				din->Close();
+				catch (Exception^ e) {
+					if (dynamic_cast<FileNotFoundException^>(e))
+						Console::WriteLine("file '{0}' not found", filename);
+					else
+						Console::WriteLine("problem reading file '{0}'", filename);
+				}
+				if (found) {
+					MessageBox::Show("This contact already exists");
+				}
+				else {
+					StreamWriter^ sw = gcnew StreamWriter(filename, true);
+					sw->WriteLine(Contact_Name + " " + System::Convert::ToString(id));
+					sw->Close();
+					this->Hide();
+				}
 			}
-			catch (Exception^ e) {
-				if (dynamic_cast<FileNotFoundException^>(e))
-					Console::WriteLine("file '{0}' not found", filename);
-				else
-					Console::WriteLine("problem reading file '{0}'", filename);
-			}
-			if (found) {
-				MessageBox::Show("This contact is already exist");
-				return;
-			}
-			StreamWriter^ sw = gcnew StreamWriter(filename, true);
-			sw->WriteLine(Contact_Name + " " + System::Convert::ToString(id));
-			sw->Close();
-			//load_contacts();
 		}
 	public:
 		Add_Contact(void)
@@ -250,7 +250,6 @@ namespace BlueSara7a {
 	private: System::Void Add2_Button_Click(System::Object^ sender, System::EventArgs^ e) {
 		if (Contact_ID->Text->Length != 0) {
 			Add_User(System::Convert::ToInt32(Contact_ID->Text));
-			this->Hide();
 		}
 	}
 };
