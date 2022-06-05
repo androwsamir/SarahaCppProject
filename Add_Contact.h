@@ -1,5 +1,7 @@
 #pragma once
 #using <system.dll>
+#include<cliext/hash_map>
+#include<cliext/map>
 
 namespace BlueSara7a {
 
@@ -11,6 +13,8 @@ namespace BlueSara7a {
 	using namespace System::Drawing;
 	using namespace System::IO;
 	using namespace System::Text;
+	using namespace cliext;
+	using namespace System::Collections::Generic;
 
 	/// <summary>
 	/// Summary for Add_Contact
@@ -18,59 +22,21 @@ namespace BlueSara7a {
 	public ref class Add_Contact : public System::Windows::Forms::Form
 	{
 	private:
-		Form^ userform;
 		String^ username;
 		String^ Contact_Name;
 		long long ID;
+		map<String^, long long>Contacts;
+	private: System::Windows::Forms::Button^ button1;
+		   hash_map<String^, String^> users_id;
 
 		bool Check(long long id) {
-			String^ filename = "check.txt";
 			bool found = 0;
-			try {
-				Console::WriteLine("tying to open file", filename);
-				StreamReader^ din = File::OpenText(filename);
-				String^ str;
-				String^ contactname = "";
-				String^ Id = "";
-				String^ temp = "";
-				while ((str = din->ReadLine()) != nullptr)
-				{
-					contactname = "";
-					Id = "";
-					temp = "";
-					for (int i = 0; i < str->Length; i++) {
-						if (str[i] != ' ') {
-							contactname += str[i];
-						}
-						else {
-							break;
-						}
-					}
-					for (int i = str->Length - 1; i >= 0; i--) {
-						if (str[i] != ' ') {
-							Id += str[i];
-						}
-						else {
-							break;
-						}
-					}
-					for (int i = Id->Length - 1; i >= 0; i--) {
-						temp += Id[i];
-					}
-					Id = temp;
-					if (Id == System::Convert::ToString(id)) {
-						Contact_Name = contactname;
-						found = 1;
-						break;
-					}
+			for (pair<String^, String^>pr : users_id) {
+				if (pr.second == System::Convert::ToString(id)) {
+					Contact_Name = pr.first;
+					found = 1;
+					break;
 				}
-				din->Close();
-			}
-			catch (Exception^ e) {
-				if (dynamic_cast<FileNotFoundException^>(e))
-					Console::WriteLine("file '{0}' not found", filename);
-				else
-					Console::WriteLine("problem reading file '{0}'", filename);
 			}
 			return found;
 		}
@@ -80,38 +46,9 @@ namespace BlueSara7a {
 			}
 			else {
 				String^ filename = "Data/";
-				filename += this->username + "_" + System::Convert::ToString(ID) + "/contacts.txt";
-				bool found = 0;
-				try {
-					Console::WriteLine("tying to open file", filename);
-					StreamReader^ din = File::OpenText(filename);
-					String^ str;
-					String^ contactname = "";
-					while ((str = din->ReadLine()) != nullptr)
-					{
-						contactname = "";
-						for (int i = 0; i < str->Length; i++) {
-							if (str[i] != ' ') {
-								contactname += str[i];
-							}
-							else {
-								break;
-							}
-						}
-						if (contactname == Contact_Name) {
-							found = 1;
-							break;
-						}
-					}
-					din->Close();
-				}
-				catch (Exception^ e) {
-					if (dynamic_cast<FileNotFoundException^>(e))
-						Console::WriteLine("file '{0}' not found", filename);
-					else
-						Console::WriteLine("problem reading file '{0}'", filename);
-				}
-				if (found) {
+				filename += username + "_" + System::Convert::ToString(ID) + "/contacts.txt";
+				long long Id = Contacts[Contact_Name];
+				if (System::Convert::ToString(Id)->Length > 1) {
 					MessageBox::Show("This contact already exists");
 				}
 				else {
@@ -130,9 +67,10 @@ namespace BlueSara7a {
 			//TODO: Add the constructor code here
 			//
 		}
-		Add_Contact(Form^ userform, String^ username, long long ID)
+		Add_Contact(String^ username, long long ID, hash_map<String^, String^> users_id, map<String^, long long>Contacts)
 		{
-			this->userform = userform;
+			this->Contacts = Contacts;
+			this->users_id = users_id;
 			this->username = username;
 			this->ID = ID;
 			InitializeComponent();
@@ -173,37 +111,46 @@ namespace BlueSara7a {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Add_Contact::typeid));
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->Contact_ID = (gcnew System::Windows::Forms::TextBox());
 			this->Cancel_Button = (gcnew System::Windows::Forms::Button());
 			this->Add2_Button = (gcnew System::Windows::Forms::Button());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->label3->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label3->ForeColor = System::Drawing::Color::Black;
-			this->label3->Location = System::Drawing::Point(30, 68);
+			this->label3->ForeColor = System::Drawing::Color::WhiteSmoke;
+			this->label3->Location = System::Drawing::Point(30, 89);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(28, 20);
+			this->label3->Size = System::Drawing::Size(30, 20);
 			this->label3->TabIndex = 11;
 			this->label3->Text = L"ID";
 			// 
 			// Contact_ID
 			// 
-			this->Contact_ID->Location = System::Drawing::Point(75, 68);
+			this->Contact_ID->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->Contact_ID->ForeColor = System::Drawing::Color::LightSeaGreen;
+			this->Contact_ID->Location = System::Drawing::Point(75, 82);
 			this->Contact_ID->Name = L"Contact_ID";
-			this->Contact_ID->Size = System::Drawing::Size(167, 22);
+			this->Contact_ID->Size = System::Drawing::Size(167, 27);
 			this->Contact_ID->TabIndex = 9;
 			// 
 			// Cancel_Button
 			// 
-			this->Cancel_Button->BackColor = System::Drawing::Color::Gray;
-			this->Cancel_Button->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			this->Cancel_Button->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->Cancel_Button->BackColor = System::Drawing::Color::LightSeaGreen;
+			this->Cancel_Button->FlatAppearance->BorderColor = System::Drawing::Color::White;
+			this->Cancel_Button->FlatAppearance->MouseDownBackColor = System::Drawing::Color::MediumTurquoise;
+			this->Cancel_Button->FlatAppearance->MouseOverBackColor = System::Drawing::Color::MediumTurquoise;
+			this->Cancel_Button->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->Cancel_Button->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->Cancel_Button->ForeColor = System::Drawing::SystemColors::ControlLight;
 			this->Cancel_Button->Location = System::Drawing::Point(154, 143);
 			this->Cancel_Button->Name = L"Cancel_Button";
 			this->Cancel_Button->Size = System::Drawing::Size(88, 31);
@@ -214,10 +161,14 @@ namespace BlueSara7a {
 			// 
 			// Add2_Button
 			// 
-			this->Add2_Button->BackColor = System::Drawing::Color::Gray;
-			this->Add2_Button->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			this->Add2_Button->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->Add2_Button->BackColor = System::Drawing::Color::LightSeaGreen;
+			this->Add2_Button->FlatAppearance->BorderColor = System::Drawing::Color::White;
+			this->Add2_Button->FlatAppearance->MouseDownBackColor = System::Drawing::Color::MediumTurquoise;
+			this->Add2_Button->FlatAppearance->MouseOverBackColor = System::Drawing::Color::MediumTurquoise;
+			this->Add2_Button->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->Add2_Button->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->Add2_Button->ForeColor = System::Drawing::SystemColors::ButtonFace;
 			this->Add2_Button->Location = System::Drawing::Point(34, 143);
 			this->Add2_Button->Name = L"Add2_Button";
 			this->Add2_Button->Size = System::Drawing::Size(79, 31);
@@ -226,18 +177,35 @@ namespace BlueSara7a {
 			this->Add2_Button->UseVisualStyleBackColor = false;
 			this->Add2_Button->Click += gcnew System::EventHandler(this, &Add_Contact::Add2_Button_Click);
 			// 
+			// button1
+			// 
+			this->button1->BackColor = System::Drawing::Color::Transparent;
+			this->button1->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.BackgroundImage")));
+			this->button1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->button1->Enabled = false;
+			this->button1->FlatAppearance->BorderSize = 0;
+			this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button1->Location = System::Drawing::Point(3, -4);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(76, 90);
+			this->button1->TabIndex = 12;
+			this->button1->UseVisualStyleBackColor = false;
+			// 
 			// Add_Contact
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::Color::Silver;
-			this->ClientSize = System::Drawing::Size(285, 221);
+			this->BackColor = System::Drawing::Color::LightSeaGreen;
+			this->ClientSize = System::Drawing::Size(290, 221);
+			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->Contact_ID);
 			this->Controls->Add(this->Cancel_Button);
 			this->Controls->Add(this->Add2_Button);
+			this->HelpButton = true;
 			this->Location = System::Drawing::Point(10000, 1000);
 			this->Name = L"Add_Contact";
+			this->ShowIcon = false;
 			this->Text = L"Add_Contact";
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -248,8 +216,11 @@ namespace BlueSara7a {
 		this->Hide();
 	}
 	private: System::Void Add2_Button_Click(System::Object^ sender, System::EventArgs^ e) {
-		if (Contact_ID->Text->Length != 0) {
+		if (Contact_ID->Text->Length == 9) {
 			Add_User(System::Convert::ToInt32(Contact_ID->Text));
+		}
+		else {
+			MessageBox::Show("Invalid ID!");
 		}
 	}
 };
